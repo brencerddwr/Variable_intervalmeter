@@ -1,9 +1,15 @@
 #include <stdint.h>
 #include <EEPROM.h>
 #include <SPI.h>
-#include <TFTv2.h>
-#include <SeeedTouchScreen.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_ILI9341.h>
+#include <SeeedTouchScreen.h> 
 #include <CountUpDownTimer.h>
+
+#define TFT_DC 6
+#define TFT_CS 5
+
+Adafruit_ILI9341 Tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
 
 /* some RGB color definitions                                                 */
 #define Black           0x0000      /*   0,   0,   0 */
@@ -119,13 +125,9 @@ void setup() {
   digitalWrite(Shutter_Relay, LOW);
   
     
-  // set up input pins
-  TFT_BL_ON;      // turn on the background light
-  Tft.TFTinit();  // init TFT library
+
+Tft.begin();
  
- // tweek SPI settings
- SPI.beginTransaction (SPISettings(8000000, MSBFIRST, SPI_MODE0));
- SPI.endTransaction ();
  
   // update settings from eeprom
   recall_settings();
@@ -149,13 +151,12 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   if (exposure_state == 0 && Dark_frame_state == 0 && idle_state == 0 && settings_state == 0) // initial state and idle state setup
   {
-    Tft.fillScreen(0, 240, 0, 320, BLACK);
-    drawButton(40, 70, 160, 55, RED, BLUE, "Start", font_size + 3, BLACK);
-    drawButton(70, 165, 100, 40, RED, BLUE, "Focus", font_size + 1, BLACK);
-    drawButton(120, 270, 110, 30, RED, BLUE, "Settings", font_size, BLACK);
+	  Tft.fillScreen (Black);
+    drawButton(40, 70, 160,55, Red, Blue, "Start", font_size + 3, Black);
+    drawButton(70, 165, 100,40, Red, Blue, "Focus", font_size + 1, Black);
+    drawButton(120, 270, 110, 30, Red, Blue, "Settings", font_size, Black);
     idle_state = 1;
   }
 
@@ -212,18 +213,25 @@ void run_ready()
 
   // if there is a press within the start area
   // reset timers
-  //Exposure.SetTimer(exposure_time[0],exposure_time[1],exposure_time[2]);
   Exposure.SetTimer(shutter_speeds[initial_exposure + exposure_number][0], shutter_speeds[initial_exposure + exposure_number][1], shutter_speeds[initial_exposure + exposure_number][2]);
   Exposure.PauseTimer();
-  //	Dark_Frame.SetTimer(Dark_frame_time[0],Dark_frame_time[1],Dark_frame_time[2]);
   Dark_Frame_calc();
   // setup display for run mode
-  Tft.fillRectangle(0, 0, 240, 320, BLACK);
-  Tft.drawString("Exposure", 10, 10, font_size, RED);
-  Tft.fillRectangle(0, 50, 240, 100, RED);
+  Tft.fillScreen(Black);
+  Tft.setCursor(10,10);
+  Tft.setTextColor(Red);
+  Tft.setTextSize(font_size);
+  Tft.print("Exposure");
+//  Tft.print("Exposure", 10, 10, font_size, Red);
+Tft.fillRect (0,50,240,100,Red);
+//  Tft.fillRectangle(0, 50, 240, 100, Red);
   sprintf(exposure_buffer, "%02lu:%02lu:%02lu", Exposure.ShowHours(), Exposure.ShowMinutes(), Exposure.ShowSeconds());
   char* g = exposure_buffer;
-  Tft.drawString(g, 10, 70, font_size + 2, BLACK);
+  Tft.setCursor(10,70);
+  Tft.setTextColor(Black);
+  Tft.setTextSize(font_size+2);
+  Tft.print(g);
+//  Tft.print(g, 10, 70, font_size + 2, Black);
   exposure_state = 1;
   Dark_frame_state = 0;
   idle_state = 0;
@@ -240,15 +248,22 @@ void exposure()
 
   if (Exposure.TimeHasChanged() ) // this prevents the time from being constantly shown.
   {
-    Tft.drawString("Exposure", 10, 10, font_size, RED);
-    Tft.fillRectangle(0, 50, 240, 100, RED); // start of updating exposure counter
+	  Tft.setCursor(10,10);
+	  Tft.setTextColor(Red);
+	  Tft.setTextSize(font_size);
+	  Tft.print("Exposure");
+    Tft.fillRect(0, 50, 240, 100, Red); // start of updating exposure counter
     sprintf(exposure_buffer, "%02lu:%02lu:%02lu", Exposure.ShowHours(), Exposure.ShowMinutes(), Exposure.ShowSeconds());
     char* g = exposure_buffer;
-    Tft.drawString(g, 10, 70, font_size + 2, BLACK); // end of updating exposure counter
+	Tft.setCursor(10,70);
+	Tft.setTextColor(Black);
+	Tft.setTextSize(font_size+2);
+	Tft.print(g);
+// end of updating exposure counter
   }
   if (Exposure.TimeCheck(0, 0, 0)) // check to see if exposure timer is done, if so change to Dark_frame state
   { exposure_state = 0;
-    Tft.fillScreen();
+    Tft.fillScreen(Black);
     //		digitalWrite(Focus_Relay,LOW);
     digitalWrite(Shutter_Relay, LOW);
     if (use_dark_frame)
@@ -260,7 +275,10 @@ void exposure()
     }
     else
     {
-      Tft.drawString("Saving Image", 10, 70, font_size + 1, RED);
+      Tft.setCursor(10,70);
+	  Tft.setTextColor(Red);
+	  Tft.setTextSize(font_size +1);
+	  Tft.print("Saving Image");
       delay(write_delay);
       Dark_frame_state = 0;
       exposure_number++;
@@ -282,18 +300,29 @@ void Dark_frame()
 
   if (Dark_Frame.TimeHasChanged() ) // this prevents the time from being constantly shown.
   {
-    Tft.drawString("Dark Frame", 10, 10, font_size, RED);
-    Tft.fillRectangle(0, 50, 240, 100, RED); // start of Dark_frame c/*ounter update
+	  Tft.setCursor(10,10);
+	  Tft.setTextColor(Red);
+	  Tft.setTextSize(font_size);
+	  Tft.print("Dark Frame");
+    Tft.fillRect(0, 50, 240,100, Red);
+	// start of Dark_frame c/*ounter update
     sprintf(dark_frame_buffer, "%02lu:%02lu:%02lu", Dark_Frame.ShowHours(), Dark_Frame.ShowMinutes(), Dark_Frame.ShowSeconds());
     char* y = dark_frame_buffer;
-    Tft.drawString(y, 10, 70, font_size + 2, BLACK); // end of Dark_frame counter update
+	Tft.setCursor(10,70);
+	Tft.setTextColor(Black);
+	Tft.setTextSize(font_size + 2);
+	Tft.print(y);
+ // end of Dark_frame counter update
   }
   if (Dark_Frame.TimeCheck(0, 0, 0)) // check if Dark_frame timer is done, if so, start idle state
   {
-    Tft.fillScreen();
-    Tft.drawString("Saving Image", 10, 70, font_size + 1, RED);
+    Tft.fillScreen(Black);
+	Tft.setCursor(10,70);
+	Tft.setTextColor(Red);
+	Tft.setTextSize(font_size+1);
+	Tft.print("Saving Image");
     delay(write_delay);
-    Tft.fillScreen();
+    Tft.fillScreen(Black);
     Dark_frame_state = 0;
     exposure_number++;
     if (exposure_number < number_of_exposures)
@@ -351,10 +380,14 @@ void running_buttons()
 
 void running_buttons_render()
 {
-  Tft.fillRectangle(3, 208, 105, 105, BLACK);
-  Tft.fillRectangle(128, 213, 95, 95, RED);
-  Tft.drawRectangle(128, 213, 95, 95, BLUE);
-  Tft.drawString("ABORT", 145, 255, font_size, BLACK);
+  Tft.fillRect(3, 208, 105, 105, Black);
+  Tft.fillRect(128, 213, 95, 95, Red);
+  Tft.drawRect(128, 213, 95, 95, Blue);
+  Tft.setCursor(145,255);
+  Tft.setTextColor(Black);
+  Tft.setTextSize(font_size);
+  Tft.print("ABORT");
+//  Tft.print("ABORT", 145, 255, font_size, Black);
 }
 
 void Settings()
@@ -377,8 +410,8 @@ void Settings()
     }
     settings_render_shutter_speed();
     settings_render_exposure_count();
-    drawButton(150, 205, 85, 40, BLACK, BLUE, "Store", font_size, GREEN);
-    drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, GREEN);
+    drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Green);
+    drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Green);
     settingsMatch = false;
     settingsRecalled = false;
   }
@@ -392,8 +425,8 @@ void Settings()
       initial_exposure = initial_exposure - 1;
     }
     settings_render_shutter_speed();
-    drawButton(150, 205, 85, 40, BLACK, BLUE, "Store", font_size, GREEN);
-    drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, GREEN);
+    drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Green);
+    drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Green);
     settingsMatch = false;
     settingsRecalled = false;
   }
@@ -413,8 +446,8 @@ void Settings()
     }
     settings_render_shutter_speed();
     settings_render_exposure_count();
-    drawButton(150, 205, 85, 40, BLACK, BLUE, "Store", font_size, GREEN);
-    drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, GREEN);
+    drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Green);
+    drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Green);
     settingsMatch = false;
     settingsRecalled = false;
   }
@@ -429,8 +462,8 @@ void Settings()
       number_of_exposures = 1;
     }
     settings_render_exposure_count();
-    drawButton(150, 205, 85, 40, BLACK, BLUE, "Store", font_size, GREEN);
-    drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, GREEN);
+    drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Green);
+    drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Green);
     settingsMatch = false;
     settingsRecalled = false;
   }
@@ -462,8 +495,8 @@ void Settings()
     settings_render_shutter_speed();
     settings_render_exposure_count();
     settingsRecalled = true;
-    drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, BLUE);
-    drawButton(150, 205, 85, 40, BLACK, BLUE, "Store", font_size, RED);
+    drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Blue);
+    drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Red);
     setting_darkframe();
     //	settings_state=0;
     //	idle_state=0;
@@ -489,13 +522,13 @@ void Settings()
     {
       if (!settingsRecalled)
       {
-        drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, RED);
+        drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Red);
       }
       else
       {
-        drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, BLUE);
+        drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Blue);
       }
-      drawButton(150, 205, 85, 40, BLACK, BLUE, "Store", font_size, RED);
+      drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Red);
       settingsMatch = true;
     }
     // end current settings match check
@@ -506,8 +539,8 @@ void Settings()
   {
     use_dark_frame = !use_dark_frame;
     setting_darkframe();
-    drawButton(150, 205, 85, 40, BLACK, BLUE, "Store", font_size, GREEN);
-    drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, GREEN);
+    drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Green);
+    drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Green);
     settingsMatch = false;
     settingsRecalled = false;
   }
@@ -517,37 +550,49 @@ void Settings()
 
 void settings_render()
 {
-  Tft.fillRectangle(0, 0, 240, 320, RED);
-  Tft.drawRectangle(0, 0, 240, 84, GREEN);
+  Tft.fillScreen(Red);
+  Tft.drawRect(0, 0,240, 84, Green);
   // initial exposure section start
-  Tft.drawString("Initial Exposure", 25, 10, font_size, BLUE);
-  drawButton(200, 40, 30, 40, BLACK, BLUE, "+", font_size + 1, RED);
+  Tft.setCursor(25,10);
+  Tft.setTextColor(Blue);
+  Tft.setTextSize(font_size);
+  Tft.print("Initial Exposure");
+//  Tft.print("Initial Exposure", 25, 10, font_size, Blue);
+  drawButton(200, 40, 30, 40, Black, Blue, "+", font_size + 1, Red);
   settings_render_shutter_speed();
-  drawButton(10, 40, 30, 40, BLACK, BLUE, "-", font_size + 1, RED);
+  drawButton(10, 40, 30, 40, Black, Blue, "-", font_size + 1, Red);
   // initial exposure section end
 
   // Number of exposures section start
-  Tft.drawRectangle(0, 85, 240, 90, GREEN);
-  Tft.drawString("Exposure Count", 25, 90, font_size, BLUE);
-  drawButton(10, 115, 30, 40, BLACK, BLUE, "-", font_size + 1, RED);
+  Tft.drawRect(0, 85, 240,90, Green);
+  Tft.setCursor(25,90);
+  Tft.setTextColor(Blue);
+  Tft.setTextSize(font_size);
+  Tft.print("Exposure Count");
+//  Tft.print("Exposure Count", 25, 90, font_size, Blue);
+  drawButton(10, 115, 30, 40, Black, Blue, "-", font_size + 1, Red);
   settings_render_exposure_count();
-  drawButton(200, 115, 30, 40, BLACK, BLUE, "+", font_size + 1, RED);
-  Tft.drawChar('-', 40, 213, font_size + 2, RED);
+  drawButton(200, 115, 30, 40, Black, Blue, "+", font_size + 1, Red);
+//  Tft.drawChar('-', 40, 213, font_size + 2, Red);
   // Number of exposures section end
 
   // use darkframe
-  Tft.drawString("Dark Frame", 5, 190, font_size, BLUE);
+  Tft.setCursor(5,190);
+  Tft.setTextColor(Blue);
+  Tft.setTextSize(font_size);
+  Tft.print("Dark Frame");
+//  Tft.print("Dark Frame", 5, 190, font_size, Blue);
   setting_darkframe();
 
   // store button start
   if (initial_exposure != EEPROM.read(eeprom_initial_exposure) || number_of_exposures != EEPROM.read(eeprom_number_of_exposures) ||
       focus_before_shoot != EEPROM.read(eeprom_focus_before_shoot) || use_dark_frame != EEPROM.read(eeprom_use_dark_frame))
   {
-    drawButton(150, 205, 85, 40, BLACK, BLUE, "Store", font_size, GREEN);
+    drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Green);
   }
   else
   {
-    drawButton(150, 205, 85, 40, BLACK, BLUE, "Store", font_size, RED);
+    drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Red);
   }
   // store button end
 
@@ -555,17 +600,17 @@ void settings_render()
   if (initial_exposure != EEPROM.read(eeprom_initial_exposure) || number_of_exposures != EEPROM.read(eeprom_number_of_exposures) ||
       focus_before_shoot != EEPROM.read(eeprom_focus_before_shoot) || use_dark_frame != EEPROM.read(eeprom_use_dark_frame))
   {
-    drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, GREEN);
+    drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Green);
   }
   else
   {
-    drawButton(150, 265, 85, 40, BLACK, BLUE, "Recall", font_size, RED);
+    drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Red);
   }
 
   // recall button end
 
   // use button start
-  drawButton(5, 265, 80, 40, BLACK, BLUE, "Use", font_size + 1, GREEN);
+  drawButton(5, 265, 80, 40, Black, Blue, "Use", font_size + 1, Green);
   // use button end
 }
 void save_settings()
@@ -583,11 +628,15 @@ void recall_settings()
   focus_before_shoot = EEPROM.read(eeprom_focus_before_shoot);
   use_dark_frame = EEPROM.read(eeprom_use_dark_frame);
 }
-void drawButton(INT16U poX, INT16U poY, INT16U length, INT16U width, INT16U fillColor, INT16U edgeColor, const char *string, INT16U size, INT16U textColor)
+void drawButton(unsigned int poX,unsigned int poY,unsigned int length,unsigned int width,unsigned int fillColor,unsigned int edgeColor, const char *string,unsigned int size,unsigned int textColor)
 {
-  Tft.fillRectangle(poX, poY, length, width, fillColor);
-  Tft.drawRectangle(poX, poY, length, width, edgeColor);
-  Tft.drawString(string, poX + 5, poY + 9, size, textColor);
+  Tft.fillRect(poX, poY, length, width, fillColor);
+  Tft.drawRect(poX, poY, length, width, edgeColor);
+  Tft.setCursor(poX+7,poY +9);
+  Tft.setTextColor(textColor);
+  Tft.setTextSize(size);
+  Tft.print(string);
+//  Tft.print(string, poX + 5, poY + 9, size, textColor);
 }
 void shutter_speed()
 {
@@ -597,20 +646,28 @@ void shutter_speed()
 void settings_render_shutter_speed()
 {
   shutter_speed();
-  Tft.fillRectangle(43, 40, 153, 40, RED);
-  Tft.drawRectangle(43, 40, 153, 40, BLUE);
-  Tft.drawString(shutterSpeed, 46, 50, font_size + 1, BLACK);
+  Tft.fillRect(43, 40, 153,40, Red);
+  Tft.drawRect(43, 40, 153,40, Blue);
+  Tft.setCursor(46,50);
+  Tft.setTextColor(Black);
+  Tft.setTextSize(font_size + 1);
+  Tft.print(shutterSpeed);
+//  Tft.print(shutterSpeed, 46, 50, font_size + 1, Black);
 }
 void settings_render_exposure_count()
 {
-  Tft.fillRectangle(43, 115, 153, 40, RED);
-  Tft.drawRectangle(43, 115, 153, 40, BLUE);
-  Tft.drawNumber(number_of_exposures, 110, 125, font_size + 1, BLACK);
+  Tft.fillRect(43, 115, 153,40, Red);
+  Tft.drawRect(43, 115, 153,40, Blue);
+  Tft.setCursor(110,125);
+  Tft.setTextColor(Black);
+  Tft.setTextSize(font_size +1);
+  Tft.print(number_of_exposures);
+//  Tft.print(number_of_exposures, 110, 125, font_size + 1, Black);
 }
 void focus()
 {
-  Tft.fillRectangle(0, 0, 240, 320, BLACK);
-  drawButton(20, 150, 200, 40, BLUE, YELLOW, "Focusing Camera", font_size, BLACK);
+  Tft.fillScreen(Black);
+  drawButton(20, 150, 200, 40, Blue, Yellow, "Focusing Camera", font_size, Black);
   digitalWrite(Focus_Relay, HIGH);
   delay(5000);
   digitalWrite(Focus_Relay, LOW);
@@ -620,10 +677,10 @@ void setting_darkframe()
 {
   if (!use_dark_frame)
   {
-    drawButton(25, 210, 45, 30, BLACK, BLUE, "off", font_size, Purple);
+    drawButton(25, 210, 45, 30, Black, Blue, "off", font_size, Purple);
   }
   else
   {
-    drawButton(25, 210, 45, 30, BLACK, BLUE, "on", font_size, Cyan);
+    drawButton(25, 210, 45, 30, Black, Blue, "on", font_size, Cyan);
   }
 }
