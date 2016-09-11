@@ -21,23 +21,6 @@
 
 //
 //
-void idle();
-void run_ready();
-void exposure();
-void Dark_frame();
-void Dark_Frame_calc();
-void running_buttons();
-void running_buttons_render();
-void Settings();
-void settings_render();
-void save_settings();
-void recall_settings();
-void drawButton(unsigned int poX,unsigned int poY,unsigned int length,unsigned int width,unsigned int fillColor,unsigned int edgeColor, const char *string,unsigned int size,unsigned int textColor);
-void shutter_speed();
-void settings_render_shutter_speed();
-void settings_render_exposure_count();
-void focus();
-void setting_darkframe();
 
 #include "pins_arduino.h" 
 #include "arduino.h"
