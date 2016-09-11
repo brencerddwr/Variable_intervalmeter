@@ -12,7 +12,7 @@ void darkFrameSetup ()
 		Tft.setTextSize(font_size);
 		Tft.print("Exposure ");
 		Tft.print(exposure_number+1);
-		Tft.print("/");
+		Tft.print(" of ");
 		Tft.print(number_of_exposures);
 		Tft.fillRect (0,50,240,100,Red);
 		Tft.setCursor(10,10);
@@ -20,7 +20,7 @@ void darkFrameSetup ()
 		Tft.setTextSize(font_size);
 		Tft.print("Dark Frame ");
 		Tft.print(exposure_number+1);
-		Tft.print("/");
+		Tft.print(" of ");
 		Tft.print(number_of_exposures);
 
 		// start of Dark_frame counter update

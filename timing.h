@@ -51,12 +51,10 @@ void running_buttons_render()
 	Tft.setTextColor(Black);
 	Tft.setTextSize(font_size);
 	Tft.print("ABORT");
-	//  Tft.print("ABORT", 145, 255, font_size, Black);
 }
 
 void run_ready()
 {
-
 	// if there is a press within the start area
 	// reset timers
 	Exposure.SetTimer(shutter_speeds[initial_exposure + exposure_number][0], shutter_speeds[initial_exposure + exposure_number][1], shutter_speeds[initial_exposure + exposure_number][2]);
@@ -69,17 +67,15 @@ void run_ready()
 	Tft.setTextSize(font_size);
 	Tft.print("Exposure ");
 	Tft.print(exposure_number+1);
-	Tft.print("/");
+	Tft.print(" of ");
 	Tft.print(number_of_exposures);
 	Tft.fillRect (0,50,240,100,Red);
-	//  Tft.fillRectangle(0, 50, 240, 100, Red);
 	sprintf(exposure_buffer, "%02lu:%02lu:%02lu", Exposure.ShowHours(), Exposure.ShowMinutes(), Exposure.ShowSeconds());
 	char* g = exposure_buffer;
 	Tft.setCursor(10,70);
 	Tft.setTextColor(Black,Red);
 	Tft.setTextSize(font_size+2);
 	Tft.print(g);
-	//  Tft.print(g, 10, 70, font_size + 2, Black);
 	exposure_state = 1;
 	Dark_frame_state = 0;
 	idle_state = 0;
@@ -98,7 +94,7 @@ void Dark_frame()
 		Tft.setTextSize(font_size);
 		Tft.print("Dark Frame ");
 		Tft.print(exposure_number+1);
-		Tft.print("/");
+		Tft.print(" of ");
 		Tft.print(number_of_exposures);
 
 		// start of Dark_frame counter update
@@ -155,14 +151,27 @@ void exposure()
 	if (Exposure.TimeCheck(0, 0, 0)) // check to see if exposure timer is done, if so change to Dark_frame state
 	{ exposure_state = 0;
 		Tft.fillScreen(Black);
-		//		digitalWrite(Focus_Relay,LOW);
 		digitalWrite(Shutter_Relay, LOW);
 		if (use_dark_frame)
 		{
 			Dark_Frame.ResumeTimer();
 			Dark_Frame.Timer();
 			Dark_frame_state = 1;
+			Tft.setCursor(10,10);
+			Tft.setTextColor(Red);
+			Tft.setTextSize(font_size);
+			Tft.print("Dark Frame ");
+			Tft.print(exposure_number+1);
+			Tft.print(" of ");
+			Tft.print(number_of_exposures);
 			Tft.fillRect (0,50,240,100,Red);
+			sprintf(dark_frame_buffer, "%02lu:%02lu:%02lu", Dark_Frame.ShowHours(), Dark_Frame.ShowMinutes(), Dark_Frame.ShowSeconds());
+			char* y = dark_frame_buffer;
+			Tft.setCursor(10,70);
+			Tft.setTextColor(Black,Red);
+			Tft.setTextSize(font_size + 2);
+			Tft.print(y);
+
 
 			running_buttons_render();
 		}
