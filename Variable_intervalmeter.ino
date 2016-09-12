@@ -52,13 +52,11 @@ void setup() {
 	recall_settings();
 
 	// set initial exposure timer and pause
-	//	Exposure.SetTimer(exposure_time[0],exposure_time[1],exposure_time[2]);
 	Exposure.SetTimer(shutter_speeds[initial_exposure][0], shutter_speeds[initial_exposure][1], shutter_speeds[initial_exposure][2]);
 	Exposure.PauseTimer();
 	Exposure.Timer();
 
 	// set dark frame timer and pause
-	//	Dark_Frame.SetTimer(Dark_frame_time[0],Dark_frame_time[1],Dark_frame_time[2]);
 	Dark_Frame_calc();
 	Dark_Frame.Timer();
 

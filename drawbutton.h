@@ -6,5 +6,4 @@ void drawButton(unsigned int poX,unsigned int poY,unsigned int length,unsigned i
 	Tft.setTextColor(textColor);
 	Tft.setTextSize(size);
 	Tft.print(string);
-	//  Tft.print(string, poX + 5, poY + 9, size, textColor);
 }

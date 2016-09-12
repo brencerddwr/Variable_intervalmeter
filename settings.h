@@ -17,7 +17,6 @@ void recall_settings()
 void shutter_speed()
 {
 	sprintf(shutterSpeed, "%02u:%02u:%02u", shutter_speeds[initial_exposure][0], shutter_speeds[initial_exposure][1], shutter_speeds[initial_exposure][2]);
-
 }
 
 void setting_darkframe()
@@ -34,51 +33,47 @@ void setting_darkframe()
 void settings_render_shutter_speed()
 {
 	shutter_speed();
-	Tft.fillRect(43, 40, 153,40, Red);
-	Tft.drawRect(43, 40, 153,40, Blue);
 	Tft.setCursor(46,50);
-	Tft.setTextColor(Black);
+	Tft.setTextColor(Black,Red);
 	Tft.setTextSize(font_size + 1);
 	Tft.print(shutterSpeed);
-	//  Tft.print(shutterSpeed, 46, 50, font_size + 1, Black);
 }
 void settings_render_exposure_count()
 {
-	Tft.fillRect(43, 115, 153,40, Red);
-	Tft.drawRect(43, 115, 153,40, Blue);
 	Tft.setCursor(110,125);
-	Tft.setTextColor(Black);
+	Tft.setTextColor(Black,Red);
 	Tft.setTextSize(font_size +1);
 	Tft.print(number_of_exposures);
-	//  Tft.print(number_of_exposures, 110, 125, font_size + 1, Black);
 }
 
 void settings_render()
 {
 	Tft.fillScreen(Red);
-	Tft.drawRect(0, 0,240, 84, Green);
+	Tft.drawRect(0, 0,240, 85, Green);
+
 	// initial exposure section start
 	Tft.setCursor(25,10);
 	Tft.setTextColor(Blue);
 	Tft.setTextSize(font_size);
 	Tft.print("Initial Exposure");
-	//  Tft.print("Initial Exposure", 25, 10, font_size, Blue);
 	drawButton(200, 40, 30, 40, Black, Blue, "+", font_size + 1, Red);
+	Tft.fillRect(43, 40, 153,40, Red);
+	Tft.drawRect(43, 40, 153,40, Blue);
 	settings_render_shutter_speed();
 	drawButton(10, 40, 30, 40, Black, Blue, "-", font_size + 1, Red);
 	// initial exposure section end
 
 	// Number of exposures section start
-	Tft.drawRect(0, 85, 240,90, Green);
-	Tft.setCursor(25,90);
+	Tft.drawRect(0, 85, 240,85, Green);
+	Tft.setCursor(38,92);
 	Tft.setTextColor(Blue);
 	Tft.setTextSize(font_size);
 	Tft.print("Exposure Count");
-	//  Tft.print("Exposure Count", 25, 90, font_size, Blue);
 	drawButton(10, 115, 30, 40, Black, Blue, "-", font_size + 1, Red);
+	Tft.fillRect(43, 115, 153,40, Red);
+	Tft.drawRect(43, 115, 153,40, Blue);
 	settings_render_exposure_count();
 	drawButton(200, 115, 30, 40, Black, Blue, "+", font_size + 1, Red);
-	//  Tft.drawChar('-', 40, 213, font_size + 2, Red);
 	// Number of exposures section end
 
 	// use darkframe
@@ -86,7 +81,6 @@ void settings_render()
 	Tft.setTextColor(Blue);
 	Tft.setTextSize(font_size);
 	Tft.print("Dark Frame");
-	//  Tft.print("Dark Frame", 5, 190, font_size, Blue);
 	setting_darkframe();
 
 	// store button start
@@ -118,7 +112,7 @@ void settings_render()
 	drawButton(5, 265, 80, 40, Black, Blue, "Use", font_size + 1, Green);
 	// use button end
 }
-// main Settings() was here
+
 void Settings()
 {
 	Point p = ts.getPoint();
@@ -227,8 +221,6 @@ void Settings()
 		drawButton(150, 265, 85, 40, Black, Blue, "Recall", font_size, Blue);
 		drawButton(150, 205, 85, 40, Black, Blue, "Store", font_size, Red);
 		setting_darkframe();
-		//	settings_state=0;
-		//	idle_state=0;
 	}
 	// end recall button
 

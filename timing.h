@@ -72,7 +72,7 @@ void run_ready()
 	Tft.fillRect (0,50,240,100,Red);
 	sprintf(exposure_buffer, "%02lu:%02lu:%02lu", Exposure.ShowHours(), Exposure.ShowMinutes(), Exposure.ShowSeconds());
 	char* g = exposure_buffer;
-	Tft.setCursor(10,70);
+	Tft.setCursor(25,70);
 	Tft.setTextColor(Black,Red);
 	Tft.setTextSize(font_size+2);
 	Tft.print(g);
@@ -89,18 +89,11 @@ void Dark_frame()
 
 	if (Dark_Frame.TimeHasChanged() ) // this prevents the time from being constantly shown.
 	{
-		Tft.setCursor(10,10);
-		Tft.setTextColor(Red);
-		Tft.setTextSize(font_size);
-		Tft.print("Dark Frame ");
-		Tft.print(exposure_number+1);
-		Tft.print(" of ");
-		Tft.print(number_of_exposures);
 
 		// start of Dark_frame counter update
 		sprintf(dark_frame_buffer, "%02lu:%02lu:%02lu", Dark_Frame.ShowHours(), Dark_Frame.ShowMinutes(), Dark_Frame.ShowSeconds());
 		char* y = dark_frame_buffer;
-		Tft.setCursor(10,70);
+		Tft.setCursor(25,70);
 		Tft.setTextColor(Black,Red);
 		Tft.setTextSize(font_size + 2);
 		Tft.print(y);
@@ -136,13 +129,9 @@ void exposure()
 
 	if (Exposure.TimeHasChanged() ) // this prevents the time from being constantly shown.
 	{
-		Tft.setCursor(10,10);
-		Tft.setTextColor(Red);
-		Tft.setTextSize(font_size);
-		Tft.print("Exposure");
 		sprintf(exposure_buffer, "%02lu:%02lu:%02lu", Exposure.ShowHours(), Exposure.ShowMinutes(), Exposure.ShowSeconds());
 		char* g = exposure_buffer;
-		Tft.setCursor(10,70);
+		Tft.setCursor(25,70);
 		Tft.setTextColor(Black,Red);
 		Tft.setTextSize(font_size+2);
 		Tft.print(g);
@@ -152,7 +141,7 @@ void exposure()
 	{ exposure_state = 0;
 		Tft.fillScreen(Black);
 		digitalWrite(Shutter_Relay, LOW);
-		if (use_dark_frame)
+		if (use_dark_frame && Dark_Frame.ShowAsSeconds() > 0)
 		{
 			Dark_Frame.ResumeTimer();
 			Dark_Frame.Timer();
@@ -167,7 +156,7 @@ void exposure()
 			Tft.fillRect (0,50,240,100,Red);
 			sprintf(dark_frame_buffer, "%02lu:%02lu:%02lu", Dark_Frame.ShowHours(), Dark_Frame.ShowMinutes(), Dark_Frame.ShowSeconds());
 			char* y = dark_frame_buffer;
-			Tft.setCursor(10,70);
+			Tft.setCursor(25,70);
 			Tft.setTextColor(Black,Red);
 			Tft.setTextSize(font_size + 2);
 			Tft.print(y);
