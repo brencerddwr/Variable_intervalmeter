@@ -1,5 +1,5 @@
 # Variable Intervalmeter for long exposure HDR photography
-variable intervalmeter for Pentax/Canon cameras
+variable intervalmeter for **Pentax/Canon** cameras
 
 This firmware is for an arduino based Interval meter mainly focused on Pentax DSLR cameras for creating a set of
 bracketed files that are one EV apart for use in creating HDR photographs.
