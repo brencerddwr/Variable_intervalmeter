@@ -13,6 +13,8 @@ boolean idle_state = 0;
 boolean settings_state = 0;
 boolean settingsMatch = true;
 boolean settingsRecalled = true;
+boolean mainHelpState = false;
+boolean mainHelpRendered = false;
 int write_delay = 5000;  // delay to allow writing to memory card
 
 unsigned int shutter_speeds[15][3] = //hours:minutes:seconds

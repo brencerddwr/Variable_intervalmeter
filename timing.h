@@ -50,7 +50,7 @@ void running_buttons_render()
 	Tft.setCursor(145,255);
 	Tft.setTextColor(Black);
 	Tft.setTextSize(font_size);
-	Tft.print("ABORT");
+	Tft.print(F("ABORT"));
 }
 
 void run_ready()
@@ -65,9 +65,9 @@ void run_ready()
 	Tft.setCursor(10,10);
 	Tft.setTextColor(Red);
 	Tft.setTextSize(font_size);
-	Tft.print("Exposure ");
+	Tft.print(F("Exposure "));
 	Tft.print(exposure_number+1);
-	Tft.print(" of ");
+	Tft.print(F(" of "));
 	Tft.print(number_of_exposures);
 	Tft.fillRect (0,50,240,100,Red);
 	sprintf(exposure_buffer, "%02lu:%02lu:%02lu", Exposure.ShowHours(), Exposure.ShowMinutes(), Exposure.ShowSeconds());
@@ -105,7 +105,7 @@ void Dark_frame()
 		Tft.setCursor(10,70);
 		Tft.setTextColor(Red);
 		Tft.setTextSize(font_size+1);
-		Tft.print("Saving Image");
+		Tft.print(F("Saving Image"));
 		delay(write_delay);
 		Tft.fillScreen(Black);
 		Dark_frame_state = 0;
@@ -149,9 +149,9 @@ void exposure()
 			Tft.setCursor(10,10);
 			Tft.setTextColor(Red);
 			Tft.setTextSize(font_size);
-			Tft.print("Dark Frame ");
+			Tft.print(F("Dark Frame "));
 			Tft.print(exposure_number+1);
-			Tft.print(" of ");
+			Tft.print(F(" of "));
 			Tft.print(number_of_exposures);
 			Tft.fillRect (0,50,240,100,Red);
 			sprintf(dark_frame_buffer, "%02lu:%02lu:%02lu", Dark_Frame.ShowHours(), Dark_Frame.ShowMinutes(), Dark_Frame.ShowSeconds());
@@ -169,7 +169,7 @@ void exposure()
 			Tft.setCursor(10,70);
 			Tft.setTextColor(Red);
 			Tft.setTextSize(font_size +1);
-			Tft.print("Saving Image");
+			Tft.print(F("Saving Image"));
 			delay(write_delay);
 			Dark_frame_state = 0;
 			exposure_number++;

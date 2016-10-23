@@ -15,6 +15,13 @@ void idle()
 	{ // check if the press is within the start area
 		focus();
 	}
+	
+	if ((p.z > __PRESURE && (p.x > 20 && p.x < 100) && (p.y > 270 && p.y < 300)))
+	{ // check if the press is within the settings area
+			mainHelpState=true;
+			mainHelp ();
+	}
+	
 
 	if ((p.z > __PRESURE && (p.x > 120 && p.x < 230) && (p.y > 270 && p.y < 300)))
 	{ // check if the press is within the settings area

@@ -31,10 +31,13 @@ CountUpDownTimer Dark_Frame(DOWN);
 
 // start of includes for local functions
 #include "drawbutton.h"
+#include "mainHelp.h"
 #include "focus.h"
 #include "settings.h"
 #include "timing.h"
 #include "idle.h"
+
+
 // end of includes for local functions
 
 
@@ -73,6 +76,7 @@ void loop() {
 		Tft.fillScreen (Black);
 		drawButton(40, 70, 160,55, Red, Blue, "Start", font_size + 3, Black);
 		drawButton(70, 165, 100,40, Red, Blue, "Focus", font_size + 1, Black);
+		drawButton(20,270,80,30,Red,Blue,"Help",font_size, Black);
 		drawButton(120, 270, 110, 30, Red, Blue, "Settings", font_size, Black);
 		idle_state = 1;
 	}
@@ -96,6 +100,11 @@ void loop() {
 	{ // Dark_frame run state loop
 		Dark_frame();
 		running_buttons();
+	}
+	
+	if (mainHelpState)
+	{
+		mainHelp ();
 	}
 
 }
