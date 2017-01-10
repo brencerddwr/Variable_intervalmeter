@@ -2,6 +2,7 @@
 char exposure_buffer[12];
 char dark_frame_buffer[12];
 char shutterSpeed[12];
+char exposureCount[2];
 byte initial_exposure = 0;
 byte number_of_exposures = 4;
 byte exposure_number = 0;

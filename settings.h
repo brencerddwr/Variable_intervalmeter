@@ -19,6 +19,10 @@ void shutter_speed()
 	sprintf(shutterSpeed, "%02u:%02u:%02u", shutter_speeds[initial_exposure][0], shutter_speeds[initial_exposure][1], shutter_speeds[initial_exposure][2]);
 }
 
+void exposure_count()
+{
+	sprintf (exposureCount, "%02u",number_of_exposures);
+}
 void setting_darkframe()
 {
 	if (!use_dark_frame)
@@ -40,10 +44,11 @@ void settings_render_shutter_speed()
 }
 void settings_render_exposure_count()
 {
+	exposure_count ();
 	Tft.setCursor(110,125);
 	Tft.setTextColor(Black,Red);
 	Tft.setTextSize(font_size +1);
-	Tft.print(number_of_exposures);
+	Tft.print(exposureCount);
 }
 
 void settings_render()
