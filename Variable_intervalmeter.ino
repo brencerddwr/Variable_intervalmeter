@@ -71,7 +71,7 @@ void setup() {
 }
 
 void loop() {
-	if (exposure_state == 0 && Dark_frame_state == 0 && idle_state == 0 && settings_state == 0) // initial state and idle state setup
+	if (exposure_state == 0 && Dark_frame_state == 0 && idle_state == 0 && settings_state == 0 && mainHelpState == 0) // initial state and idle state setup
 	{
 		Tft.fillScreen (Black);
 		drawButton(40, 70, 160,55, Red, Blue, "Start", font_size + 3, Black);

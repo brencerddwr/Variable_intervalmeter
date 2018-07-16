@@ -1,15 +1,15 @@
 // Dark_Frame_calc() was here
 void Dark_Frame_calc()
 {
-	if (Exposure.ShowAsSeconds() > 30 && use_dark_frame == 1)
+	if (Exposure.ShowTotalSeconds() > 15 && use_dark_frame == 1)
 	{
-		if (Exposure.ShowAsSeconds() > 59 && Exposure.ShowAsSeconds() < 121)
+		if (Exposure.ShowTotalSeconds() > 29 && Exposure.ShowTotalSeconds() < 121)
 		{
-			Dark_Frame.SetTimer(Exposure.ShowAsSeconds());
+			Dark_Frame.SetTimer(Exposure.ShowTotalSeconds());
 		}
 		else
 		{
-			Dark_Frame.SetTimer(Exposure.ShowAsSeconds() - (Exposure.ShowAsSeconds() / dark_frame_factor) + 10);
+			Dark_Frame.SetTimer(Exposure.ShowTotalSeconds() - (Exposure.ShowTotalSeconds() / dark_frame_factor) + 10);
 		}
 	}
 	else
@@ -138,10 +138,11 @@ void exposure()
 		// end of updating exposure counter
 	}
 	if (Exposure.TimeCheck(0, 0, 0)) // check to see if exposure timer is done, if so change to Dark_frame state
-	{ exposure_state = 0;
-		Tft.fillScreen(Black);
+	{
 		digitalWrite(Shutter_Relay, LOW);
-		if (use_dark_frame && Dark_Frame.ShowAsSeconds() > 0)
+		exposure_state = 0;
+		Tft.fillScreen(Black);
+		if (use_dark_frame && Dark_Frame.ShowTotalSeconds() > 0)
 		{
 			Dark_Frame.ResumeTimer();
 			Dark_Frame.Timer();
